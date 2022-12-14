@@ -210,7 +210,7 @@ public class USSD implements IUSSD {
 
     @Override
     public boolean hasEnoughMoney(double amount) {
-        return checkBalance() > amount;
+        return checkBalance() >= amount;
     }
 
     @Override
