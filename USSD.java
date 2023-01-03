@@ -4,56 +4,15 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
-public class USSD implements IUSSD {
-    List<User> users;
-    List<Account> accounts;
+public class USSD extends Transaction implements IUSSD{
+    List<User> users = new ArrayList<>();
+    List<Account> accounts = new ArrayList<>();;
     Scanner input;
     User session;
 
     USSD() {
-        users = new ArrayList<>();
-        accounts = new ArrayList<>();
+        super(loadUsers(), loadAccounts());
         input = new Scanner(System.in);
-    }
-
-    @Override
-    public void loadUsers() {
-        try {
-            BufferedReader bf = new BufferedReader(new FileReader("./database/users.txt"));
-            String line;
-
-            while ((line = bf.readLine()) != null) {
-                if (line.trim().length() > 0) {
-                    String[] userTable = line.split(",");
-                    users.add(new User(userTable[0].trim(), userTable[1].trim(), userTable[2].trim(),
-                            Integer.valueOf(userTable[3].trim())));
-                }
-            }
-
-            bf.close();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void loadAccounts() {
-        try {
-            BufferedReader bf = new BufferedReader(new FileReader("./database/accounts.txt"));
-            String line;
-
-            while ((line = bf.readLine()) != null) {
-                if (line.trim().length() > 0) {
-                    String acc[] = line.split(",");
-                    accounts.add(new Account(getUser(acc[0].trim()), Double.valueOf(acc[1].trim())));
-                }
-            }
-
-            bf.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
@@ -70,53 +29,6 @@ public class USSD implements IUSSD {
     @Override
     public double checkBalance() {
         return getMyAccount().getAccountBalance();
-    }
-
-    @Override
-    public boolean depositMoney() {
-        System.out.print("How much money do you want to deposit: ");
-        double depositAmount = input.nextDouble();
-
-        Account myAccount = getMyAccount();
-        myAccount.setAccountBalance(myAccount.getAccountBalance() + depositAmount);
-        return true;
-    }
-
-    @Override
-    public boolean sendMoney() {
-        System.out.print("Receipient: ");
-        String uId = input.next();
-
-        System.out.print("How much: ");
-        double amount = input.nextDouble();
-
-        Account recepieAccount = getUserAccount(uId);
-        Account myAccount = getMyAccount();
-
-        if (recepieAccount != null) {
-            myAccount.setAccountBalance(myAccount.getAccountBalance() - amount);
-            recepieAccount.setAccountBalance(recepieAccount.getAccountBalance() + amount);
-            return true;
-        } else {
-            System.out.println("User account does not exist!!");
-        }
-        return false;
-    }
-
-    @Override
-    public boolean withdrawMoney() {
-        System.out.print("How much money do you want to withdraw: ");
-        double withdrawAmount = input.nextDouble();
-
-        if (hasEnoughMoney(withdrawAmount)) {
-            Account myAccount = getMyAccount();
-            myAccount.setAccountBalance(myAccount.getAccountBalance() - withdrawAmount);
-            return true;
-        } else {
-            System.out.println("You don't have sufficient money to make that withdrawal!!");
-        }
-
-        return false;
     }
 
     @Override

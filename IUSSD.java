@@ -1,11 +1,10 @@
-public interface IUSSD {
-    public void loadUsers();
-    public void loadAccounts();
+import java.util.List;
+
+public interface IUSSD{
+    public List<User> loadUsers();
+    public List<Account> loadAccounts();
     public User login(String username, int pin);
     public double checkBalance();
-    public boolean depositMoney();
-    public boolean sendMoney();
-    public boolean withdrawMoney();
     public void exit();
     public User getUser(String id);
     public Account getMyAccount();
